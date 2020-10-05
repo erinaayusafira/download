@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Download File</title>
+    <script>
+        function Yes() { //berisikan closure renderData(), getAllListFiles(), dan method init().
+            var self = this;
+            var $ul = document.getElementById("list-files");
+
+            var renderData = function (res){ //untuk merendering data dari json ke html
+                res.forEach(function (each) {
+                    var $li = document.createElement("li");
+                    var $a = document.createElement("a");
+
+                    $li.innerText = "Download: ",
+                    $li.appendChild($a);
+                    $ul.appendChild($li);
+
+                    $a.href = "/download?path="+ encodeURI(each.path);
+                    $a.innerText = each.filename;
+                    $a.target = "_blank";
+                });
+            };
+
+            var getAllListFiles = function(){ //merequest ke back-end dengan ajax return json
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET","/list-files");
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4 && xhr.status ==     200){
+                    var json =  JSON.parse(xhr.responseText);
+                    renderData(json);
+                }
+            };
+            xhr.send();
+            };
+
+            self.init = function(){  //mengakses fungsi init
+                getAllListFiles();
+            };
+        };
+
+        window.onload = function() { //penempatan event 
+            new Yes().init();
+        };
+    </script>
+    <style>
+        body{
+            background-color: black;
+        }
+        h1{
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+            margin-left: 40%;
+            margin-top: 3%;
+        }
+        li{
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            margin-left: 30%;
+            margin-top: 15px;
+        }
+        a{
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 15px;
+            /* text-decoration: none; */
+        }
+        #selesai{
+            font-size: 18px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: black;
+            text-decoration: none;
+        }
+        button{
+            width: 100px;
+            height: 40px;
+            margin-top: 5%;
+            margin-left: 55%;
+            cursor: pointer;
+            color: rgb(208, 222, 226); 
+            border-radius: 20px;
+        }
+        button:hover{
+            width: 102px;
+            height: 42px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1> LIST PHOTO</h1>
+        <!-- //berisikan list semua file yang ada dalam folder files melalui ajax -->
+    <ul id="list-files"><br></ul> 
+    <button id="btn-upload" type="submit">
+       <a href="/" id="selesai">Selesai</a> 
+    </button>
+</body>
+</html>
